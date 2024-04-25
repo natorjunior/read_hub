@@ -153,6 +153,7 @@ public class Service {
 
         setBusca(busca);
         transformText();
+        
         List<Integer> indexBusca = indexBusca();
         List<Integer> indexInicio = indexInicio(indexBusca);
         List<Integer> indexFinal = indexFinal(indexBusca);
