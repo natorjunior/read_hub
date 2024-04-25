@@ -12,73 +12,151 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 public class Service {
 
-    public String processo(String busca) throws Exception {
-        // Carregar o documento PDF
-        File file = new File(
-                "/home/eddev/Documentos/Faculdade/read_hub/api_readhub/src/main/resources/diarios/caderno2-Judiciario.pdf");
+    // constructor
+    public Service(String path) {
+        setPath(path);
+    }
+
+    // Getters e Setters de path.
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    // Getters e Setters de busca.
+    private String busca;
+
+    public String getBusca() {
+        return busca;
+    }
+
+    public void setBusca(String busca) {
+        this.busca = busca;
+    }
+
+    // Getters e Setters de linhas.
+    private String[] linhas;
+
+    public String[] getLinhas() {
+        return linhas;
+    }
+
+    public void setLinhas(String[] linhas) {
+        this.linhas = linhas;
+    }
+
+    // Carregar o documento PDF
+    private PDDocument createDocument() throws Exception {
+        File file = new File(this.path);
         PDDocument doc = Loader.loadPDF(file);
 
         // Remove a primeira pagina do documento
         doc.removePage(0);
 
-        // transforma o documento em texto
+        return doc;
+    }
+
+    // transforma o documento em texto e particiona em linhas em um array de Strings
+    private void transformText() throws Exception {
         PDFTextStripper stripper = new PDFTextStripper();
-        String texto = stripper.getText(doc);
+        String texto = stripper.getText(this.createDocument());
+        String[] linhas = texto.split("\n");
+        setLinhas(linhas);
+    }
 
-        // quebra o documentos e cria um array com todas as linhas;
-        String[] textCut = texto.split("\n");
-
+    // acha aonde ocorreu a aparição da busca.
+    private List<Integer> indexBusca() {
         List<Integer> indexBusca = new ArrayList<Integer>();
-        List<Integer> indexInicio = new ArrayList<Integer>();
-        List<Integer> indexFinal = new ArrayList<Integer>();
-
-        // acha aonde ocorreu a aparição da busca.
-        for (int i = 0; i < textCut.length; i++) {
-            if (textCut[i].contains(busca)) {
+        for (int i = 0; i < linhas.length; i++) {
+            if (linhas[i].contains(this.busca)) {
                 indexBusca.add(i);
             }
         }
+        return indexBusca;
+    }
 
+    private Pattern regex() {
         // Cria o regex de numero de processo
         String regex = "\\d\\d\\d\\d\\d\\d\\d-\\d\\d\\.\\d\\d\\d\\d\\.\\d\\.\\d\\d\\.\\d\\d\\d\\d";
 
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 
-        // Faz a busca para cima e para baixo do inicio e fim do processo.
+        return pattern;
+    }
+
+    // Faz a busca para cima dos indices de inicio do processo.
+    private List<Integer> indexInicio(List<Integer> indexBusca) {
+        List<Integer> indexInicio = new ArrayList<Integer>();
+
+        int indexAntX = 0;
         for (int i = 0; i < indexBusca.size(); i++) {
-            for (int j = indexBusca.get(i); j >= 0; j--) {
-                Matcher matcher = pattern.matcher(textCut[j]);
-                if (matcher.find()) {
-                    indexInicio.add(j);
-                    break;
-                }
-            }
-            for (int y = indexBusca.get(i) + 1; y < textCut.length; y++) {
-                Matcher matcher = pattern.matcher(textCut[y]);
-                if (matcher.find()) {
-                    indexFinal.add(y - 1);
+            // Busca o inicio
+            for (int x = indexBusca.get(i); x >= 0; x--) {
+                Matcher matcher = this.regex().matcher(linhas[x]);
+                if (matcher.find() && indexAntX != x) {
+                    indexInicio.add(x);
+                    indexAntX = x;
                     break;
                 }
             }
         }
+
+        return indexInicio;
+    }
+
+    // Faz a busca para baixo dos indices de fim do processo.
+    private List<Integer> indexFinal(List<Integer> indexBusca) {
+        List<Integer> indexFinal = new ArrayList<Integer>();
+
+        int indexAntY = 0;
+        for (int i = 0; i < indexBusca.size(); i++) {
+            // Busca o final
+            for (int y = indexBusca.get(i) + 1; y < linhas.length; y++) {
+                Matcher matcher = this.regex().matcher(linhas[y]);
+                if (matcher.find() && indexAntY != y) {
+                    indexFinal.add(y - 1);
+                    indexAntY = y;
+                    break;
+                }
+            }
+        }
+
+        return indexFinal;
+    }
+
+    private List<String> listarProcesos(List<Integer> indexInicio, List<Integer> indexFinal) {
 
         // Cria uma lista dos processos
-        List<String> citacao = new ArrayList<String>();
+        List<String> processos = new ArrayList<String>();
 
         // Cria o texto do processo e adiciona na lista de processos.
-        for (int i = 0; i < indexBusca.size(); i++) {
-            String textoCitacao = "";
-            for (int j = indexInicio.get(i); j <= indexFinal.get(i); j++) {
-                textoCitacao += textCut[j];
+        for (int i = 0; i < indexInicio.size(); i++) {
+            if (indexInicio.get(i) != -1 || indexFinal.get(i) != -1) {
+                String textoCitacao = "";
+                for (int j = indexInicio.get(i); j <= indexFinal.get(i); j++) {
+                    textoCitacao += linhas[j];
+                }
+                processos.add(textoCitacao);
             }
-            citacao.add(textoCitacao);
         }
 
-        System.out.println(indexBusca.toString());
-        System.out.println(indexInicio.toString());
-        System.out.println(indexFinal.toString());
-        System.out.println("___________________________________________________");
+        return processos;
 
-        return citacao.toString();
+    }
+
+    public List<String> processo(String busca) throws Exception {
+
+        setBusca(busca);
+        transformText();
+        List<Integer> indexBusca = indexBusca();
+        List<Integer> indexInicio = indexInicio(indexBusca);
+        List<Integer> indexFinal = indexFinal(indexBusca);
+
+        return listarProcesos(indexInicio, indexFinal);
     }
 }
