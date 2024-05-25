@@ -50,6 +50,8 @@ public class Service {
         this.linhas = linhas;
     }
 
+    // Metodos principais.
+
     // Carregar o documento PDF
     private PDDocument createDocument() throws Exception {
         File file = new File(this.path);
@@ -99,7 +101,7 @@ public class Service {
             for (int x = indexBusca.get(i); x >= 0; x--) {
                 Matcher matcher = this.regex().matcher(linhas[x]);
                 if (matcher.find() && indexAntX != x) {
-                    indexInicio.add(x);
+                    indexInicio.add(x-25);
                     indexAntX = x;
                     break;
                 }
@@ -119,7 +121,7 @@ public class Service {
             for (int y = indexBusca.get(i) + 1; y < linhas.length; y++) {
                 Matcher matcher = this.regex().matcher(linhas[y]);
                 if (matcher.find() && indexAntY != y) {
-                    indexFinal.add(y - 1);
+                    indexFinal.add(y + 25);
                     indexAntY = y;
                     break;
                 }
@@ -139,7 +141,7 @@ public class Service {
             if (indexInicio.get(i) != -1 || indexFinal.get(i) != -1) {
                 String textoCitacao = "";
                 for (int j = indexInicio.get(i); j <= indexFinal.get(i); j++) {
-                    textoCitacao += linhas[j];
+                    textoCitacao = textoCitacao + " " + linhas[j];
                 }
                 processos.add(textoCitacao);
             }

@@ -16,7 +16,6 @@ public class Processos {
         return new String("API - ReadHub");
     }
     
-    
     @GetMapping("/busca")
     public Object home(@RequestParam String busca, @RequestParam String data) throws Exception {
         
@@ -24,10 +23,16 @@ public class Processos {
             return "So se pode pesquisar apatir de 3 caracteres";
         }
         
-        Service buscaProcesso = new Service("/home/eddev/Documentos/Faculdade/read_hub/api_readhub/src/main/resources/diarios/caderno2-Judiciario.pdf");
+        Service buscaProcesso = new Service("/home/eddev/Documentos/read_hub/api_readhub/src/main/resources/diarios/caderno2-Judiciario.pdf");
         
         return buscaProcesso.processo(busca);
     }
     
-
+    @GetMapping("/Linhas")
+    public String[] getMethodName() throws Exception {
+        Service buscaProcesso = new Service("/home/eddev/Documentos/read_hub/api_readhub/src/main/resources/diarios/caderno2-Judiciario.pdf");
+        buscaProcesso.processo("brisa");
+        return buscaProcesso.getLinhas();
+    }
+    
 }
