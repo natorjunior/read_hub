@@ -1,0 +1,50 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "com.readhub/com.readhub.service.Main",
+            "projectName": "readhub"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "com.readhub/com.readhub.Main",
+            "projectName": "readhub"
+        },
+        {
+            "type": "java",
+            "name": "DataJudRequest",
+            "request": "launch",
+            "mainClass": "com.readhub/com.readhub.service.DataJudRequest",
+            "projectName": "readhub"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "com.readhub/com.readhub.App",
+            "projectName": "readhub"
+        },
+        {
+            "type": "java",
+            "name": "Download",
+            "request": "launch",
+            "mainClass": "com.apireadhub.api_readhub.controllers.Download",
+            "projectName": "api_readhub"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ApiReadhubApplication<api_readhub>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.apireadhub.api_readhub.ApiReadhubApplication",
+            "projectName": "api_readhub",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=44287 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=api_readhub"
+        }
+    ]
+}

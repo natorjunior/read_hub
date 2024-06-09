@@ -1,0 +1,16 @@
+#processo {
+    -fx-border-color: black;
+    -fx-border-radius: 4;
+}
+
+#mostraProcesso {
+    -fx-background-color: #BB9564;
+    -fx-border-radius: 6;
+}
+
+#mostraProcesso:hover {
+    -fx-background-color: #ffffff;
+    -fx-border-color: black;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+}

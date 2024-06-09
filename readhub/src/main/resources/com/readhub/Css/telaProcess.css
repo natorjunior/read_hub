@@ -1,0 +1,21 @@
+#boxProcesso {
+    -fx-border-color: black;
+    -fx-border-radius: 6;
+    -fx-background-color: white;
+}
+
+#buttonExit {
+    -fx-background-color: #BB9564;
+    -fx-border-radius: 6;
+}
+
+#buttonExit:hover {
+    -fx-background-color: #ffffff;
+    -fx-border-color: black;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+}
+
+#textflow {
+    -fx-text-alignment: justify;
+}
